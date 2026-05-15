@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Para ti, mi amor ✦</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Montserrat:wght@300;400;500;600&family=Dancing+Script:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Cursor PC -->
+    <div class="cursor-glow" id="cursorGlow"></div>
+    <div class="cursor-dot" id="cursorDot"></div>
+
+    <!-- Fondo estrellas -->
+    <canvas id="starCanvas"></canvas>
+
+    <!-- Ondas expansivas al tocar -->
+    <div class="ripple-container" id="rippleContainer"></div>
+
+    <!-- Corazones y mensaje mágico -->
+    <div class="floating-hearts-container" id="heartsContainer"></div>
+    <div class="magic-message" id="magicMessage"><span>✨ Te amo ✨</span></div>
+
+    <!-- Contenedor principal -->
+    <div class="main-container">
+
+        <!-- HERO -->
+        <section class="hero" id="hero">
+            <div class="hero-moon" id="heroMoon"></div>
+            <div class="hero-content">
+                <p class="hero-eyebrow">Mi persona favorita</p>
+                <h1 class="hero-title">
+                    Hasta que nos<br>volvamos a ver,<br>
+                    <span class="accent">mi amor</span>
+                </h1>
+                <p class="hero-typewriter" id="typewriter">
+                    <span id="typewriterText"></span><span class="cursor-blink"></span>
+                </p>
+            </div>
+            <div class="hero-scroll-indicator">
+                <div class="mouse"><div class="wheel"></div></div>
+                <span>Desliza</span>
+            </div>
+        </section>
+
+        <!-- CARTA -->
+        <section class="section-letter" id="letter">
+            <div class="letter-container">
+                <div class="letter-envelope" id="letterEnvelope">
+                    <div class="seal">💌</div>
+                    <div class="letter-content">
+                        <span class="dear">Mi niña hermosa,</span>
+                        <p>No hay distancia que pueda apagar lo que siento por ti. Cada kilómetro que nos separe será solo un recordatorio de lo fuerte que es nuestro amor.</p>
+                        <p>Guarda cada amanecer como un beso mío, cada atardecer como un abrazo que te envío desde aquí, y cada estrella como una promesa de que nuestro amor no entiende de mapas ni calendarios.</p>
+                        <p>Eres lo mejor que me ha pasado y esta despedida no es un adiós, es un "te espero con todo mi corazón, sin importar cuánto tiempo pase".</p>
+                        <span class="signature">Siempre tuyo,<br>con todo mi amor</span>
+                    </div>
+                    <span class="click-hint">Toca la carta ✦</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- GALERÍA -->
+        <section class="section-gallery" id="gallery">
+            <h2 class="section-title">Nuestros Momentos</h2>
+            <div class="gallery-grid">
+                <div class="gallery-item"><div class="img-placeholder"></div><div class="overlay-text">El día que nos conocimos</div></div>
+                <div class="gallery-item"><div class="img-placeholder"></div><div class="overlay-text">Nuestra primera cita</div></div>
+                <div class="gallery-item"><div class="img-placeholder"></div><div class="overlay-text">Esa tarde inolvidable</div></div>
+                <div class="gallery-item"><div class="img-placeholder"></div><div class="overlay-text">Tu sonrisa favorita</div></div>
+                <div class="gallery-item"><div class="img-placeholder"></div><div class="overlay-text">Nuestro lugar especial</div></div>
+                <div class="gallery-item"><div class="img-placeholder"></div><div class="overlay-text">El abrazo que extrañaré</div></div>
+            </div>
+        </section>
+
+        <!-- CÁPSULAS DE AMOR -->
+        <section class="section-capsules" id="capsules">
+            <h2 class="section-title">Pequeñas verdades sobre nosotros</h2>
+            <p class="section-subtitle">Toca cada cápsula para descubrir su mensaje</p>
+            <div class="capsules-grid">
+                <div class="capsule-card"><div class="capsule-inner"><div class="capsule-front"><span class="capsule-icon">🌅</span><span class="capsule-label">Lo que haré cada mañana</span></div><div class="capsule-back"><p>Cada mañana que despertaré lejos de ti, lo primero que haré será cerrar los ojos e imaginarte a mi lado.</p></div></div></div>
+                <div class="capsule-card"><div class="capsule-inner"><div class="capsule-front"><span class="capsule-icon">🌙</span><span class="capsule-label">Nuestra conexión secreta</span></div><div class="capsule-back"><p>No importa cuántos kilómetros nos separen, porque cada noche miramos la misma luna y en ese instante estamos juntos.</p></div></div></div>
+                <div class="capsule-card"><div class="capsule-inner"><div class="capsule-front"><span class="capsule-icon">💎</span><span class="capsule-label">Mi tesoro más valioso</span></div><div class="capsule-back"><p>Guardo cada risa tuya en mi memoria como un tesoro. Cuando esté triste, solo necesitaré recordar el sonido de tu felicidad.</p></div></div></div>
+                <div class="capsule-card"><div class="capsule-inner"><div class="capsule-front"><span class="capsule-icon">⏳</span><span class="capsule-label">El día del reencuentro</span></div><div class="capsule-back"><p>El día que nos volvamos a encontrar, el tiempo se detendrá. Porque ese abrazo valdrá por todos los días que estuvimos lejos.</p></div></div></div>
+                <div class="capsule-card"><div class="capsule-inner"><div class="capsule-front"><span class="capsule-icon">🧠</span><span class="capsule-label">En mi mente siempre</span></div><div class="capsule-back"><p>Eres mi primer pensamiento al despertar y el último antes de dormir. Incluso a la distancia, ocupas cada rincón de mi mente.</p></div></div></div>
+                <div class="capsule-card"><div class="capsule-inner"><div class="capsule-front"><span class="capsule-icon">💓</span><span class="capsule-label">Lo que grita mi corazón</span></div><div class="capsule-back"><p>No existen palabras suficientes para describir lo que siento. Pero cada latido de mi corazón grita tu nombre sin cesar.</p></div></div></div>
+            </div>
+        </section>
+
+        <!-- BOTÓN MÁGICO -->
+        <section class="section-magic" id="magic">
+            <h2 class="section-title">¿Quieres ver algo mágico?</h2>
+            <button class="magic-button" id="magicButton">✨ Libera la magia ✨</button>
+            <p class="magic-hint">Prepárate para un cielo lleno de estrellas fugaces...</p>
+        </section>
+
+        <!-- CAJITA DE MÚSICA -->
+        <section class="section-music" id="music">
+            <h2 class="section-title">Nuestra canción</h2>
+            <p class="section-subtitle">Toca el botón para escuchar una melodía que me recuerda a ti</p>
+            <button class="music-button" id="musicButton">🎵 Reproducir melodía 🎵</button>
+            <p class="music-status" id="musicStatus"></p>
+        </section>
+
+        <!-- CONSTELACIÓN (sección dedicada) -->
+        <section class="section-constellation" id="constellation">
+            <h2 class="section-title">Dibuja nuestra constelación</h2>
+            <p class="section-subtitle">Toca las estrellas para unirlas</p>
+            <div class="constellation-wrapper">
+                <canvas id="constellationCanvas"></canvas>
+                <button class="clear-constellation" id="clearConstellation">✨ Nueva constelación</button>
+            </div>
+        </section>
+
+        <!-- MENSAJE EN BOTELLA -->
+        <section class="section-bottle" id="bottle">
+            <h2 class="section-title">Un mensaje en una botella</h2>
+            <button class="bottle-button" id="bottleButton">🍾 Abrir botella</button>
+        </section>
+
+        <!-- PROMESAS -->
+        <section class="section-promises" id="promises">
+            <h2 class="section-title">Te prometo...</h2>
+            <ul class="promises-list" id="promisesList">
+                <li><span class="icon">🌟</span> Pensar en ti cada día, sin falta.</li>
+                <li><span class="icon">💌</span> Escribirte cartas que guarden mi voz.</li>
+                <li><span class="icon">🌙</span> Mirar la misma luna y saber que tú también la ves.</li>
+                <li><span class="icon">🎵</span> Enviarte canciones que digan lo que yo no puedo en palabras.</li>
+                <li><span class="icon">💪</span> Ser mejor cada día, para cuando vuelvas, tener más amor para darte.</li>
+                <li><span class="icon">🔒</span> Guardar mi corazón solo para ti, porque nadie ocupa tu lugar.</li>
+                <li><span class="icon">✨</span> Hacer que cada segundo lejos valga la pena cuando estemos juntos.</li>
+            </ul>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="footer">
+            <p class="final-message">Te amo más que ayer,<br>pero menos que mañana</p>
+            <p class="sub-message">— Hecho con todo mi corazón para ti —</p>
+        </footer>
+    </div>
+
+    <!-- Modal del mensaje en botella -->
+    <div class="bottle-modal" id="bottleModal">
+        <div class="bottle-modal-content">
+            <span class="close-modal" id="closeModal">&times;</span>
+            <div class="bottle-message">
+                <p>Donde quiera que estés,</p>
+                <p>siempre serás mi hogar.</p>
+                <p>Te espero con los brazos abiertos</p>
+                <p>y el corazón lleno de ti.</p>
+                <p>🌊💙</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
