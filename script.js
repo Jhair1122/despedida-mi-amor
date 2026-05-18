@@ -40,15 +40,15 @@ function createRipple(x, y) {
     setTimeout(() => ripple.remove(), 800);
 }
 
-// ============ TOQUE MÁGICO (sin bloquear scroll) ============
+// ============ TOQUE MÁGICO ============
 document.addEventListener('touchend', (e) => {
     const touch = e.changedTouches[0];
     const target = document.elementFromPoint(touch.clientX, touch.clientY);
-    if (target && (target.tagName === 'BUTTON' || target.tagName === 'A' || target.closest('.capsule-card') || target.closest('.letter-envelope') || target.closest('.gallery-item') || target.closest('#constellationCanvas'))) return;
+    if (target && (target.tagName === 'BUTTON' || target.tagName === 'A' || target.closest('.capsule-card') || target.closest('.letter-envelope') || target.closest('.gallery-item') || target.closest('#petalsCanvas') || target.closest('#loveWall'))) return;
     createRipple(touch.clientX, touch.clientY);
     spawnHeart(touch.clientX, touch.clientY);
     createSparks(touch.clientX, touch.clientY, 5);
-    if (Math.random() < 0.3) spawnShootingStar(touch.clientX, touch.clientY);
+    if (Math.random() < 0.3) spawnShootingStar(touch.clientX, touch.clientY, Math.PI/4 + Math.random()*0.8);
 });
 
 // ============ CANVAS ESTRELLAS + AURORA ============
@@ -117,10 +117,11 @@ class ShootingStar {
 }
 
 function spawnShootingStar(x, y, angle, speed, length) {
+    const defaultAngle = Math.PI/4 + Math.random() * (Math.PI - Math.PI/4);
     shootingStars.push(new ShootingStar(
         x ?? Math.random() * starCanvas.width * 0.9,
         y ?? Math.random() * starCanvas.height * 0.4,
-        angle ?? Math.PI/4 + (Math.random()-0.5)*0.8,
+        angle ?? defaultAngle,
         speed ?? 3 + Math.random()*5,
         length ?? 40 + Math.random()*80
     ));
@@ -155,44 +156,57 @@ window.addEventListener('deviceorientation', (e) => {
     if (e.gamma !== null && e.beta !== null) { deviceTiltX = e.gamma * 0.8; deviceTiltY = e.beta * 0.8; }
 });
 
-// ============ CONSTELACIÓN LOCAL (sin interferir scroll) ============
-const constCanvas = document.getElementById('constellationCanvas');
-if (constCanvas) {
-    constCanvas.width = constCanvas.parentElement.clientWidth;
-    constCanvas.height = 300;
-    const ctxConst = constCanvas.getContext('2d');
-    let points = [], lines = [];
-    function draw() {
-        ctxConst.clearRect(0, 0, constCanvas.width, constCanvas.height);
-        lines.forEach(l => {
-            ctxConst.beginPath(); ctxConst.moveTo(l.x1, l.y1); ctxConst.lineTo(l.x2, l.y2);
-            ctxConst.strokeStyle = 'rgba(255,215,180,0.7)'; ctxConst.lineWidth = 2; ctxConst.stroke();
-        });
-        points.forEach(p => {
-            ctxConst.beginPath(); ctxConst.arc(p.x, p.y, 5, 0, Math.PI*2);
-            ctxConst.fillStyle = '#f0d6b8'; ctxConst.fill();
-            ctxConst.shadowColor = '#f0d6b8'; ctxConst.shadowBlur = 10; ctxConst.fill(); ctxConst.shadowBlur = 0;
-        });
+// ============ LLUVIA DE PÉTALOS ============
+const petalsCanvas = document.getElementById('petalsCanvas');
+if (petalsCanvas) {
+    petalsCanvas.width = petalsCanvas.parentElement.clientWidth;
+    petalsCanvas.height = 300;
+    const ctxP = petalsCanvas.getContext('2d');
+    let petals = [];
+    class Petal {
+        constructor(x, y) {
+            this.x = x; this.y = y;
+            this.vx = (Math.random() - 0.5) * 1.2;
+            this.vy = Math.random() * 1.5 + 0.5;
+            this.size = Math.random() * 8 + 4;
+            this.alpha = 1;
+            this.type = Math.random() < 0.3 ? '💔' : '🌸';
+        }
+        update() {
+            this.x += this.vx;
+            this.y += this.vy;
+            this.alpha -= 0.008;
+        }
+        draw(ctx) {
+            ctx.font = `${this.size}px serif`;
+            ctx.fillText(this.type, this.x, this.y);
+        }
     }
-    constCanvas.addEventListener('touchstart', (e) => {
+    function animatePetals() {
+        ctxP.clearRect(0, 0, petalsCanvas.width, petalsCanvas.height);
+        petals = petals.filter(p => p.alpha > 0);
+        petals.forEach(p => { p.update(); p.draw(ctxP); });
+        requestAnimationFrame(animatePetals);
+    }
+    animatePetals();
+    petalsCanvas.addEventListener('touchstart', (e) => {
         e.preventDefault();
         const touch = e.touches[0];
-        const rect = constCanvas.getBoundingClientRect();
+        const rect = petalsCanvas.getBoundingClientRect();
         const x = touch.clientX - rect.left, y = touch.clientY - rect.top;
-        points.push({x, y});
-        if (points.length > 1) lines.push({x1: points[points.length-2].x, y1: points[points.length-2].y, x2: x, y2: y});
-        draw();
+        for (let i=0; i<8; i++) petals.push(new Petal(x, y));
         spawnHeart(touch.clientX, touch.clientY);
-    });
-    document.getElementById('clearConstellation').addEventListener('click', () => {
-        points = []; lines = [];
-        ctxConst.clearRect(0, 0, constCanvas.width, constCanvas.height);
     });
 }
 
-// ============ TYPEWRITER ============
+// ============ TYPEWRITER (MENSAJES DE ARREPENTIMIENTO) ============
 const typewriterText = document.getElementById('typewriterText');
-const phrases = ['Porque cada despedida...', 'es solo el preludio...', 'de un reencuentro más hermoso.', 'Te llevo conmigo, siempre. 💫'];
+const phrases = [
+    'Entendí que fallé...',
+    'Tú merecías más...',
+    'Nunca debí hacerte sentir sola...',
+    'Dame la oportunidad de demostrarlo 💔',
+];
 let phraseIdx = 0, charIdx = 0, deleting = false;
 function type() {
     const curr = phrases[phraseIdx];
@@ -237,7 +251,7 @@ function createSparks(x, y, count) {
     }
 }
 
-// ============ BOTÓN MÁGICO ============
+// ============ BOTÓN DE PERDÓN ============
 const magicBtn = document.getElementById('magicButton');
 const magicMsg = document.getElementById('magicMessage');
 let magicCooldown = false, starInterval = null;
@@ -250,10 +264,9 @@ magicBtn.addEventListener('click', () => {
     for (let i=0; i<30; i++) setTimeout(() => spawnHeart(Math.random()*window.innerWidth, window.innerHeight-20), i*60);
     let count = 0;
     starInterval = setInterval(() => {
-        for (let j=0; j<2; j++) spawnShootingStar(Math.random()*starCanvas.width, Math.random()*starCanvas.height*0.3, -Math.PI/4+(Math.random()-0.5)*1.2, 5+Math.random()*6, 60+Math.random()*100);
+        for (let j=0; j<2; j++) spawnShootingStar(Math.random()*starCanvas.width, Math.random()*starCanvas.height*0.3, Math.PI/4 + Math.random()*0.8, 5+Math.random()*6, 60+Math.random()*100);
         count++; if (count >= 20) { clearInterval(starInterval); starInterval = null; }
     }, 200);
-    // fuegos artificiales
     for (let k=0; k<5; k++) setTimeout(() => {
         const fx = cx + (Math.random()-0.5)*300, fy = cy + (Math.random()-0.5)*200;
         for (let p=0; p<40; p++) {
@@ -294,27 +307,87 @@ document.querySelectorAll('.capsule-card').forEach(card => card.addEventListener
     createSparks(r.left+r.width/2, r.top+r.height/2, 8);
 }));
 
-// ============ MÚSICA ============
-let audioCtx = null;
+// ============ MÚSICA CON VISUALIZADOR ============
+let audioCtx = null, analyser = null;
+const visualizer = document.getElementById('visualizer');
+const visCtx = visualizer.getContext('2d');
 function playMelody() {
-    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    const notes = [523.25, 587.33, 659.25, 698.46, 783.99, 880, 987.77, 1046.5]; // escala
-    const melody = [0,1,2,3,4,3,2,1, 0,2,4,5,7,5,4,2];
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 64;
+    }
+    // Melodía más melancólica y romántica
+    const notes = [261.63, 293.66, 329.63, 349.23, 392, 440, 493.88, 523.25];
+    const melody = [4,3,2,1, 0,1,2,3, 4,5,4,3, 2,3,4,1];
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
     osc.type = 'sine'; gain.gain.value = 0.2;
-    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.connect(gain); gain.connect(analyser);
+    analyser.connect(audioCtx.destination);
     let time = audioCtx.currentTime;
     melody.forEach((note, i) => {
-        osc.frequency.setValueAtTime(notes[note], time + i*0.2);
-        gain.gain.setValueAtTime(0.2, time + i*0.2);
-        gain.gain.exponentialRampToValueAtTime(0.001, time + i*0.2 + 0.18);
+        osc.frequency.setValueAtTime(notes[note], time + i*0.25);
+        gain.gain.setValueAtTime(0.2, time + i*0.25);
+        gain.gain.exponentialRampToValueAtTime(0.001, time + i*0.25 + 0.22);
     });
-    osc.start(time); osc.stop(time + melody.length*0.2 + 0.2);
-    document.getElementById('musicStatus').textContent = '♪ Melodía sonando...';
-    setTimeout(() => document.getElementById('musicStatus').textContent = '', melody.length*200 + 500);
+    osc.start(time); osc.stop(time + melody.length*0.25 + 0.3);
+    document.getElementById('musicStatus').textContent = '♪ Esto es para ti...';
+    function drawVis() {
+        const bufferLength = analyser.frequencyBinCount;
+        const dataArray = new Uint8Array(bufferLength);
+        analyser.getByteTimeDomainData(dataArray);
+        visCtx.clearRect(0, 0, visualizer.width, visualizer.height);
+        visCtx.lineWidth = 2;
+        visCtx.strokeStyle = '#e8a0b4';
+        visCtx.beginPath();
+        const sliceWidth = visualizer.width / bufferLength;
+        let x = 0;
+        for (let i = 0; i < bufferLength; i++) {
+            const v = dataArray[i] / 128.0;
+            const y = v * visualizer.height / 2;
+            if (i === 0) visCtx.moveTo(x, y);
+            else visCtx.lineTo(x, y);
+            x += sliceWidth;
+        }
+        visCtx.stroke();
+        if (audioCtx.state !== 'closed') requestAnimationFrame(drawVis);
+    }
+    drawVis();
+    setTimeout(() => document.getElementById('musicStatus').textContent = '', melody.length*250 + 500);
 }
 document.getElementById('musicButton').addEventListener('click', playMelody);
+
+// ============ LANZAR DESEOS ============
+document.getElementById('wishButton').addEventListener('click', () => {
+    for (let i=0; i<15; i++) {
+        setTimeout(() => {
+            const x = Math.random() * window.innerWidth;
+            const y = window.innerHeight - 20;
+            spawnShootingStar(x, y, -Math.PI/2 + (Math.random()-0.5)*0.8, 4+Math.random()*4, 70);
+            spawnHeart(x, y);
+            createSparks(x, y, 8);
+        }, i*100);
+    }
+});
+
+// ============ MURO DE AMOR ============
+const loveWall = document.getElementById('loveWall');
+const loveWords = ['Te amo', 'Perdóname', 'I love you', 'Je t\'aime', 'Ich liebe dich', 'Ti amo', 'Eu te amo', '愛してる', '사랑해', 'Я тебя люблю', 'Volvamos', 'Eres mi todo'];
+loveWall.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    const touch = e.touches[0];
+    const rect = loveWall.getBoundingClientRect();
+    const x = touch.clientX - rect.left, y = touch.clientY - rect.top;
+    const word = document.createElement('span');
+    word.className = 'love-word';
+    word.textContent = loveWords[Math.floor(Math.random()*loveWords.length)];
+    word.style.left = x + 'px';
+    word.style.top = y + 'px';
+    loveWall.appendChild(word);
+    setTimeout(() => word.remove(), 3000);
+    spawnHeart(touch.clientX, touch.clientY);
+});
 
 // ============ BOTELLA ============
 const bottleModal = document.getElementById('bottleModal');
@@ -352,5 +425,6 @@ document.getElementById('heroMoon').addEventListener('dblclick', (e) => {
     for (let i=0; i<15; i++) setTimeout(() => spawnHeart(r.left+r.width/2+(Math.random()-0.5)*200, r.top+r.height/2-Math.random()*200), i*50);
 });
 
-console.log('%c✨ Para ti, con todo mi amor ✨', 'font-size:1.5rem; color:#e8a0b4;');
+console.log('%c💔 Para Camila, con todo mi arrepentimiento 💔', 'font-size:1.5rem; color:#e8a0b4;');
+console.log('%cNo quiero perderte. Esta página es mi forma de pedirte perdón.', 'color:#f0d6b8;');
 setTimeout(() => spawnHeart(window.innerWidth/2, window.innerHeight/2), 2000);
